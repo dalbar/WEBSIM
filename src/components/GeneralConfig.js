@@ -1,17 +1,9 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import {
-  Grid,
-  Typography,
-  List,
-  ListItem,
-  Paper,
-  FormControlLabel,
-  Radio
-} from "material-ui";
-import Done from "material-ui-icons/Done";
+import { Grid, Typography } from "material-ui";
 import { getNumberOfCars } from "../services/websimApiCalls";
-import { PulseLoader } from "halogen";
+import ServerNotReachable from "./ServerNotReachable";
+import SimProps from "./SimProps";
 
 const GeneralConfig = inject("store")(
   observer(
@@ -26,6 +18,7 @@ const GeneralConfig = inject("store")(
         }
         setTimeout(getNumberOfCars, 2000);
       };
+
       render() {
         const store = this.props.store;
         return (
@@ -36,56 +29,8 @@ const GeneralConfig = inject("store")(
               </Typography>
             </Grid>
             <Grid item>
-              {store.activeCars === 0 && (
-                <Grid direction="column" align="center" container item>
-                  <Grid item>
-                    <Typography>
-                      We are trying to reach the server. Please make sure the
-                      simulation is running.
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <PulseLoader size="20px" margin="4px" color="orange" />
-                  </Grid>
-                </Grid>
-              )}
-              {store.activeCars > 0 && (
-                <Paper elevation={4}>
-                  <List>
-                    <ListItem>
-                      Online:{" "}
-                      <Done
-                        style={{ marginLeft: "10px", color: "green" }}
-                      />{" "}
-                    </ListItem>
-                    <ListItem>Active Cars: {store.activeCars}</ListItem>
-                    <ListItem>
-                      <FormControlLabel
-                        control={
-                          <Radio
-                            checked={store.viewStore.activeMode === "decentral"}
-                            onChange={store.viewStore.setActiveMode}
-                            value="decentral"
-                            name="radio button decentral"
-                          />
-                        }
-                        label="decentral"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Radio
-                            checked={store.viewStore.activeMode === "central"}
-                            onChange={store.viewStore.setActiveMode}
-                            value="central"
-                            name="radio button central"
-                          />
-                        }
-                        label="central"
-                      />
-                    </ListItem>
-                  </List>
-                </Paper>
-              )}
+              {store.activeCars === 0 && <ServerNotReachable />}
+              {store.activeCars > 0 && <SimProps />}
             </Grid>
           </Grid>
         );
